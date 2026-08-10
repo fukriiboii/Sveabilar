@@ -1,0 +1,8 @@
+package com.sveabilar.api.features.user.exception;
+
+public class UserNotFoundException extends RuntimeException {
+
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}

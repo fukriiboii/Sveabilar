@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: svea-bilar-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_DATABASE: svea_bilar
+      MYSQL_USER: svea_bilar_app
+      MYSQL_PASSWORD: svea_bilar_password
+      MYSQL_ROOT_PASSWORD: root_password
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - svea_bilar_mysql_data:/var/lib/mysql
+
+volumes:
+  svea_bilar_mysql_data:
