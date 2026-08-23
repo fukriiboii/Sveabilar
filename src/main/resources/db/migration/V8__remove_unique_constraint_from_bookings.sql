@@ -1,0 +1,3 @@
+-- This migration intentionally does nothing.
+-- The unique constraint was removed in V7.
+-- Active uniqueness is enforced in V9 with a conditional unique index for CONFIRMED bookings only.

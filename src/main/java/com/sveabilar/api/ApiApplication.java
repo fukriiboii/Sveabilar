@@ -1,4 +1,4 @@
-package com.sveabilar.api;
+ package com.sveabilar.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
