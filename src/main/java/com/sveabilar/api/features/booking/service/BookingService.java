@@ -1,7 +1,8 @@
 package com.sveabilar.api.features.booking.service;
 
 import java.time.LocalDate;
-import java.util.List;
+
+import org.springframework.data.domain.Page;
 
 import com.sveabilar.api.features.booking.dto.BookingRequest;
 import com.sveabilar.api.features.booking.dto.BookingResponse;
@@ -19,7 +20,7 @@ public interface BookingService {
     BookingResponse getBookingById(Long id); 
 
     // ADMIN
-    List<BookingResponse> getBookings(LocalDate date, BookingStatus status);
+    Page<BookingResponse> getBookings(LocalDate date, BookingStatus status, int page, int size);
 
   
 
