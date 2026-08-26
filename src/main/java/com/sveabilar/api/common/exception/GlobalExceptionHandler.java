@@ -6,6 +6,7 @@ import com.sveabilar.api.features.availability.exception.AvailabilityNotAvailabl
 import com.sveabilar.api.features.availability.exception.AvailabilityNotFoundException;
 import com.sveabilar.api.features.booking.exception.BookingCanNotBeCancelledException;
 import com.sveabilar.api.features.booking.exception.BookingNotFoundException;
+import com.sveabilar.api.features.booking.exception.BookingTermsNotAcceptedException;
 import com.sveabilar.api.features.user.exception.UserNotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -54,5 +55,10 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(BookingNotFoundException.class)
         public ResponseEntity<String> handleBookingNotFound(BookingNotFoundException exception) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage()); 
+        }
+
+        @ExceptionHandler(BookingTermsNotAcceptedException.class)
+        public ResponseEntity<String> handleBookingTermsNotAccepted(BookingTermsNotAcceptedException exception) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
 }

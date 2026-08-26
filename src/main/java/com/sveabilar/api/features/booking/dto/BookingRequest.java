@@ -31,4 +31,6 @@ public class BookingRequest {
 
     @NotNull
     private ServiceType serviceType;
+
+    private Boolean termsAccepted;
 }

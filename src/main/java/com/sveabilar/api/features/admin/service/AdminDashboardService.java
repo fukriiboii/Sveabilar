@@ -26,18 +26,16 @@ public class AdminDashboardService {
         long totalBookings = bookingRepository.count();
 
         long todayBookings = bookingRepository
-                .findByAvailabilityDateAndStatus(
+                .countByAvailabilityDateAndStatus(
                         today,
                         BookingStatus.CONFIRMED
-                )
-                .size();
+                );
 
         long upcomingBookings = bookingRepository
-                .findByAvailabilityDateGreaterThanEqualAndStatus(
+                .countByAvailabilityDateGreaterThanEqualAndStatus(
                         today,
                         BookingStatus.CONFIRMED
-                )
-                .size();
+                );
 
         long availableTimes = availabilityRepository
                 .findByDateAndAvailabilityStatus(

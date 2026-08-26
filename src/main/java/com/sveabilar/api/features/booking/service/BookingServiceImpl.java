@@ -3,6 +3,10 @@ package com.sveabilar.api.features.booking.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +21,10 @@ import com.sveabilar.api.features.booking.entity.Booking;
 import com.sveabilar.api.features.booking.entity.BookingStatus;
 import com.sveabilar.api.features.booking.exception.BookingCanNotBeCancelledException;
 import com.sveabilar.api.features.booking.exception.BookingNotFoundException;
+import com.sveabilar.api.features.booking.exception.BookingTermsNotAcceptedException;
 import com.sveabilar.api.features.booking.mapper.BookingMapper;
 import com.sveabilar.api.features.booking.repository.BookingRepository;
+import com.sveabilar.api.features.email.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,9 +36,14 @@ public class BookingServiceImpl implements BookingService {
     private final AvailabilityRepository availabilityRepository;
     private final BookingMapper bookingMapper;
 
+    private final EmailService emailService; 
+
     @Override
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
+        if (!Boolean.TRUE.equals(request.getTermsAccepted())) {
+            throw new BookingTermsNotAcceptedException("Du måste godkänna bokningsvillkoren");
+        }
 
         Availability availability = availabilityRepository
                 .findById(request.getAvailabilityId())
@@ -61,6 +72,21 @@ public class BookingServiceImpl implements BookingService {
         availability.setAvailabilityStatus(AvailabilityStatus.BOOKED);
 
         Booking savedBooking = bookingRepository.save(booking);
+
+        String serviceName = savedBooking.getServiceType().getDisplayName();
+
+        try {
+            emailService.sendBookingConfirmation(
+                savedBooking.getCustomerEmail(),
+                savedBooking.getCustomerName(),
+                serviceName,
+                savedBooking.getAvailability().getDate().toString(),
+                savedBooking.getAvailability().getStartTime() + " - " + savedBooking.getAvailability().getEndTime(),
+                savedBooking.getAddress()
+            );
+        } catch (Exception e) {
+            //logga felet
+        }
 
         return bookingMapper.toResponse(savedBooking);
     }
@@ -112,31 +138,38 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingResponse> getBookings(
+    public Page<BookingResponse> getBookings(
             LocalDate date,
-            BookingStatus status) {
+            BookingStatus status,
+            int page,
+            int size) {
 
-        List<Booking> bookings;
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Order.asc("availability.date"),
+                        Sort.Order.asc("availability.startTime")));
+
+        Page<Booking> bookings;
 
         if (date != null && status != null) {
             bookings = bookingRepository
-                    .findByAvailabilityDateAndStatus(date, status);
+                    .findByAvailabilityDateAndStatus(date, status, pageable);
 
         } else if (date != null) {
             bookings = bookingRepository
-                    .findByAvailabilityDate(date);
+                    .findByAvailabilityDate(date, pageable);
 
         } else if (status != null) {
             bookings = bookingRepository
-                    .findByStatus(status);
+                    .findByStatus(status, pageable);
 
         } else {
-            bookings = bookingRepository.findAll();
+            bookings = bookingRepository.findAll(pageable);
         }
 
-        return bookings.stream()
-                .map(bookingMapper::toResponse)
-                .toList();
+        return bookings.map(bookingMapper::toResponse);
     }
 
     

@@ -1,7 +1,8 @@
 package com.sveabilar.api.features.booking.controller;
 
 import java.time.LocalDate;
-import java.util.List;
+
+import org.springframework.data.domain.Page;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,10 +48,13 @@ public class AdminBookingController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<BookingResponse>> getBookings(@RequestParam(required = false) LocalDate date,
-            @RequestParam(required = false) BookingStatus status) {
+    public ResponseEntity<Page<BookingResponse>> getBookings(
+            @RequestParam(required = false) LocalDate date,
+            @RequestParam(required = false) BookingStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(bookingService.getBookings(date, status));
+        return ResponseEntity.ok(bookingService.getBookings(date, status, page, size));
     }
 
     @PostMapping
