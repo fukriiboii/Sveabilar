@@ -16,4 +16,8 @@ public interface AvailabilityRepository extends JpaRepository<Availability, Long
     boolean existsByDateAndStartTimeAndEndTime(LocalDate date,LocalTime startTime, LocalTime endTime);
 
     List<Availability> findByDateBetweenOrderByDateAscStartTimeAsc(LocalDate startDate, LocalDate endDate);
+
+    long countByDateGreaterThanEqualAndAvailabilityStatus(
+            LocalDate date,
+            AvailabilityStatus availabilityStatus);
 }

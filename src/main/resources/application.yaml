@@ -4,11 +4,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
-
-  flyway:
-    enabled: true
 
   mail:
     properties:

@@ -38,11 +38,10 @@ public class AdminDashboardService {
                 );
 
         long availableTimes = availabilityRepository
-                .findByDateAndAvailabilityStatus(
+                .countByDateGreaterThanEqualAndAvailabilityStatus(
                         today,
                         AvailabilityStatus.AVAILABLE
-                )
-                .size();
+                );
 
         return new DashboardStatsResponse(
                 totalBookings,

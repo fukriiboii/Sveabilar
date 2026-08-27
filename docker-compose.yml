@@ -5,9 +5,7 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_DATABASE: svea_bilar
-      MYSQL_USER: svea_bilar_app
-      MYSQL_PASSWORD: svea_bilar_password
+      MYSQL_DATABASE: SveaBilarLocalDb
       MYSQL_ROOT_PASSWORD: root_password
 
     ports:
