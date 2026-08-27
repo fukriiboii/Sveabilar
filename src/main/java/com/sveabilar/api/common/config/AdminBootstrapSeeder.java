@@ -39,11 +39,15 @@ public class AdminBootstrapSeeder {
 
             validateConfiguration();
 
-            if (userRepository.findByEmail(adminEmail).isPresent()) {
+            User admin = userRepository.findByEmail(adminEmail).orElseGet(User::new);
+
+            if (admin.getId() != null
+                    && passwordEncoder.matches(adminPassword, admin.getPassword())
+                    && admin.getRole() == Role.ADMIN
+                    && admin.isActive()) {
                 return;
             }
 
-            User admin = new User();
             admin.setEmail(adminEmail);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole(Role.ADMIN);
