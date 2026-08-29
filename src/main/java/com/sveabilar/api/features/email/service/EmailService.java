@@ -2,6 +2,7 @@ package com.sveabilar.api.features.email.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,12 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${app.mail.from}")
+    private String fromAddress;
+
+    @Value("${app.mail.reply-to}")
+    private String replyToAddress;
+
     public void sendBookingConfirmation(
             String to,
             String customerName,
@@ -21,9 +28,9 @@ public class EmailService {
             String address
     ) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("info@sveabilarochdäck.se");
+        message.setFrom(fromAddress);
         message.setTo(to);
-        message.setReplyTo("info@sveabilarochdäck.se");
+        message.setReplyTo(replyToAddress);
         message.setSubject("Bekräftelse för din bokning");
         message.setText(
             "Hej " + customerName + ",\n\n" +
@@ -40,7 +47,7 @@ public class EmailService {
 
             "Vänliga hälsningar,\n" +
             "Sveabilar och Däck AB\n" +
-            "info@sveabilarochdäck.se"
+            fromAddress
         );
 
         mailSender.send(message);

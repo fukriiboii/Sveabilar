@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sveabilar.api.features.availability.entity.Availability;
 import com.sveabilar.api.features.availability.entity.AvailabilityStatus;
@@ -31,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     private final BookingRepository bookingRepository;
     private final AvailabilityRepository availabilityRepository;
@@ -84,8 +88,12 @@ public class BookingServiceImpl implements BookingService {
                 savedBooking.getAvailability().getStartTime() + " - " + savedBooking.getAvailability().getEndTime(),
                 savedBooking.getAddress()
             );
-        } catch (Exception e) {
-            //logga felet
+        } catch (Exception exception) {
+            logger.error(
+                    "Booking confirmation email failed for bookingId={} recipient={}",
+                    savedBooking.getId(),
+                    savedBooking.getCustomerEmail(),
+                    exception);
         }
 
         return bookingMapper.toResponse(savedBooking);
