@@ -58,6 +58,7 @@ public class EmailService {
 
         try {
             mailSender.send(message);
+            logger.info("Booking confirmation email sent for recipient={}", to);
         } catch (Exception exception) {
             logger.error("Booking confirmation email failed for recipient={}", to, exception);
         }
