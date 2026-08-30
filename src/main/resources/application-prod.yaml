@@ -8,19 +8,9 @@ spring:
     username: ${MYSQLUSER}
     password: ${MYSQLPASSWORD}
 
-  mail:
-    host: ${MAIL_HOST:smtp.simply.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-
+  resend: 
+    api-key: ${RESEND_API_KEY}
+    
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:86400000}
