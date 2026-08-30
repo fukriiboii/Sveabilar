@@ -3,6 +3,9 @@ package com.sveabilar.api.features.email.service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     private final JavaMailSender mailSender;
 
@@ -19,6 +24,7 @@ public class EmailService {
     @Value("${app.mail.reply-to}")
     private String replyToAddress;
 
+    @Async
     public void sendBookingConfirmation(
             String to,
             String customerName,
@@ -50,6 +56,10 @@ public class EmailService {
             fromAddress
         );
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+        } catch (Exception exception) {
+            logger.error("Booking confirmation email failed for recipient={}", to, exception);
+        }
     }
 }

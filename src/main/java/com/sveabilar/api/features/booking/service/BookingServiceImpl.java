@@ -1,7 +1,6 @@
 package com.sveabilar.api.features.booking.service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sveabilar.api.features.availability.entity.Availability;
 import com.sveabilar.api.features.availability.entity.AvailabilityStatus;
@@ -33,8 +30,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
-
-    private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     private final BookingRepository bookingRepository;
     private final AvailabilityRepository availabilityRepository;
@@ -79,22 +74,14 @@ public class BookingServiceImpl implements BookingService {
 
         String serviceName = savedBooking.getServiceType().getDisplayName();
 
-        try {
-            emailService.sendBookingConfirmation(
-                savedBooking.getCustomerEmail(),
-                savedBooking.getCustomerName(),
-                serviceName,
-                savedBooking.getAvailability().getDate().toString(),
-                savedBooking.getAvailability().getStartTime() + " - " + savedBooking.getAvailability().getEndTime(),
-                savedBooking.getAddress()
-            );
-        } catch (Exception exception) {
-            logger.error(
-                    "Booking confirmation email failed for bookingId={} recipient={}",
-                    savedBooking.getId(),
-                    savedBooking.getCustomerEmail(),
-                    exception);
-        }
+        emailService.sendBookingConfirmation(
+            savedBooking.getCustomerEmail(),
+            savedBooking.getCustomerName(),
+            serviceName,
+            savedBooking.getAvailability().getDate().toString(),
+            savedBooking.getAvailability().getStartTime() + " - " + savedBooking.getAvailability().getEndTime(),
+            savedBooking.getAddress()
+        );
 
         return bookingMapper.toResponse(savedBooking);
     }
