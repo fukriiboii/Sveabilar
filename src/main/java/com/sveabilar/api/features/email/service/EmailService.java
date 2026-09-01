@@ -24,7 +24,6 @@ public class EmailService {
     @Value("${app.mail.reply-to}")
     private String replyToAddress;
 
-    @Async
     public void sendBookingConfirmation(
             String to,
             String customerName,

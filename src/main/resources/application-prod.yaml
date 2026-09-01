@@ -8,12 +8,12 @@ spring:
     username: ${MYSQLUSER}
     password: ${MYSQLPASSWORD}
 
-  resend: 
-    api-key: ${RESEND_API_KEY}
-    
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:86400000}
+
+resend:
+  api-key: ${RESEND_API_KEY}
 
 app:
   mail:
