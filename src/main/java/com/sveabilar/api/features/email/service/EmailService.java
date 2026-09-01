@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +32,13 @@ public class EmailService {
             String address
     ) {
 
+        // 1. Kontrollera att metoden faktiskt körs
+        logger.info(
+                "Starting booking confirmation email. recipient={}, from={}",
+                to,
+                fromAddress
+        );
+
         String text =
                 "Hej " + customerName + ",\n\n" +
                 "Din bokning är nu bekräftad.\n\n" +
@@ -57,16 +63,27 @@ public class EmailService {
                 .build();
 
         try {
-            resend.emails().send(params);
 
+            // 2. Kontrollera att vi faktiskt försöker skicka till Resend
             logger.info(
-                    "Booking confirmation email sent for recipient={}",
+                    "Sending booking confirmation through Resend. recipient={}",
                     to
             );
 
+            var response = resend.emails().send(params);
+
+            // 3. Resend accepterade anropet
+            logger.info(
+                    "Booking confirmation email accepted by Resend. recipient={}, response={}",
+                    to,
+                    response
+            );
+
         } catch (Exception exception) {
+
+            // 4. Något gick fel
             logger.error(
-                    "Booking confirmation email failed for recipient={}",
+                    "Booking confirmation email failed. recipient={}",
                     to,
                     exception
             );
